@@ -6,6 +6,15 @@ module.exports=
     {
         access_schema: "mongodb://localhost/cnews"
     },
+    worker:
+    {
+        // if whitelist exist, blacklist is invalid.
+        blacklist: [],
+        whitelist:
+        [
+            /^http:\/\/([^\/]*\.)?cnn\.com($|\/.*)/,
+        ]
+    },
     scheduler:
     {
         // max worker working at the same time.
