@@ -10,7 +10,7 @@ module.exports=
         blacklist: [],
         whitelist:
         [
-            /^http:\/\/([^\/]*\.)?cnn\.com($|\/.*)/,
+            /^(.*\.)?cnn\.com$/i
         ]
     },
     scheduler:

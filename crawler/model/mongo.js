@@ -27,11 +27,20 @@ The term-document sparse matrix, one document per entry.
         #url#: [string]   // full url of the page, can be joined with rawhtml
         [K]: [int/float]    // the value of matrix[url][k]
     }
+
+## rules
+The rule for different websites crawled in robots.txt
+### Schema
+    {
+        hostname: [string]
+        rules: [(bool, urlrule)]
+        fetchtime: [int]
+    }
 *******************************************************************************/
 var conf=require("../conf/configure");
 var mongojs=require('mongojs');
 
-var collections=["rawhtml", "nettopo", "terms"];
+var collections=["rawhtml", "nettopo", "terms", "rules"];
 var db=mongojs(conf.database.access_schema, collections);
 
 for (var i=0; i<collections.length; i++)
