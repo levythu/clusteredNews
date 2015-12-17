@@ -24,7 +24,7 @@ The raw HTML of each crawled webpage, one entry per page.
 The term-document sparse matrix, one document per entry.
 ### Schema
     {
-        #url#: [string]   // full url of the page, can be joined with rawhtml
+        __url__: [string]   // full url of the page, can be joined with rawhtml
         [K]: [int/float]    // the value of matrix[url][k]
     }
 

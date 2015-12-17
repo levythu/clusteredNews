@@ -2,6 +2,9 @@ var conf=require("../conf/configure");
 var html=require("./html");
 var url=require("url");
 
+var natural=require("natural");
+natural.PorterStemmer.attach();
+
 var model=require("../model/mongo");
 var db=model.db;
 var RAWHTML=model.rawhtml;
@@ -34,8 +37,6 @@ function validateURL(urlval)
 // insert all the elements in the list to rawhtml waitling list.
 function chainInsert(inputList, pos, callback)
 {
-    if (pos==null)
-        pos=0;
     if (pos==inputList.length)
     {
         callback();
@@ -80,6 +81,23 @@ function chainInsert(inputList, pos, callback)
         });
     });
 }
+
+function countWords(contentInHier, callback)
+{
+    result={};
+    for (var i=0; i<contentInHier.length; i++)
+    {
+        var tRes=contentInHier[i].tokenizeAndStem();
+        for (var j=0; j<tRes.length; j++)
+        {
+            if (!(tRes[j] in result))
+                result[tRes[j]]=0;
+            result[tRes[j]]++;
+        }
+    }
+    callback(result);
+}
+
 function work()
 {
     db[RAWHTML].findAndModify({
@@ -106,7 +124,8 @@ function work()
         }
         html.parse(doc.raw, function(dataInHier, urlList)
         {
-            var topo={};
+            // parse HTML successfully
+            var topo={url: doc.url};
             var validList=[];
             for (var i=0; i<urlList.length; i++)
             {
@@ -117,6 +136,43 @@ function work()
                     validList.push(res);
                 }
             }
+            // Defining the end point.
+            var theEndCount=0;
+            var theEnd=function()
+            {
+                theEndCount++;
+                if (theEndCount>=3)
+                {
+                    db[RAWHTML].update(
+                    {
+                        $set: {status: 3}
+                    }, {multi: false}, function()
+                    {
+                        process.nextTick(work);
+                    });
+                }
+            }
+            // now start three concurrent routine: updating new url to db, split words and check them in,
+            // and recording topology to db.
+            chainInsert(validList, 0, theEnd);
+            db[NETTOPO].update(
+            {
+                url: doc.url
+            }, topo, {upsert: true}, function()
+            {
+                theEnd();
+            });
+            countWords(dataInHier, function(wordsMap)
+            {
+                wordsMap["__URL__"]=doc.url;
+                db[RESMATX].upload(
+                {
+                    __URL__: doc.url
+                }, wordsMap, {upsert: true}, function()
+                {
+                    theEnd();
+                });
+            });
         }, function()
         {
             // parsing error;
