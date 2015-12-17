@@ -1,3 +1,5 @@
+// html utilities including a parser and a url generator.
+
 var htmlparser=require("htmlparser2");
 var request=require("./request");
 
@@ -16,10 +18,11 @@ var Hierarchy=
     "h8": 8,
     "others": 9
 };
-function parse(content, callback)
+function parse(content, callback, onerror)
 {
     hStack=[];
     result=[];
+    hrefList=[];
     for (var i=0; i<=Hierarchy.MAX_H; i++)
         result.push("");
     var parser = new htmlparser.Parser(
@@ -33,8 +36,11 @@ function parse(content, callback)
             }
             else if (lcName=="a")
             {
-                // URL crawled!
-                // TODO: insert.
+                if (attribs.href!=null)
+                {
+                    // URL crawled!
+                    hrefList.push(attribs.href);
+                }
             }
     	},
     	ontext: function(text)
@@ -58,18 +64,28 @@ function parse(content, callback)
     	},
         onend: function()
         {
-            callback(result);
+            callback(result, hrefList);
+        },
+        onerror: function(err)
+        {
+            onerror(err);
         }
     }, {decodeEntities: true});
     parser.write(content);
     parser.end();
 };
 
+exports.parse=parse;
+exports.Hierarchy=Hierarchy;
+
+/*
 request.GET("http://www.levy.at/me?lang=en-us", function(isCon, data)
 {
     console.log("stparse");
-    parse(data, function(res)
+    parse(data, function(r, h)
     {
-        console.log(res);
+        console.log(r);
+        console.log(h);
     });
 });
+*/

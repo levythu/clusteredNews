@@ -112,7 +112,13 @@ function work()
             });
         }, function()
         {
-            process.nextTick(work);
+            db[RAWHTML].update({url: doc.url},
+            {
+                $set: {status: 0}
+            }, {multi: false}, function()
+            {
+                process.nextTick(work);
+            });
         });
     });
 }
