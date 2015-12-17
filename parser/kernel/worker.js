@@ -11,6 +11,30 @@ var RAWHTML=model.rawhtml;
 var NETTOPO=model.nettopo;
 var RESMATX=model.terms;
 
+var workersAlive=0;
+function reportDeath()
+{
+    workersAlive--;
+    if (conf.log.log_workers_num>0 && (workersAlive % conf.log.log_workers_num==0 || workersAlive==conf.scheduler.max_worker))
+    {
+        console.log((new Date()).toUTCString(), ">\tWorkers died to "+workersAlive);
+    }
+}
+function batchWorkers()
+{
+    console.log((new Date()).toUTCString(), ">\tSpawn launched");
+    while (workersAlive<=conf.scheduler.max_worker)
+    {
+        workersAlive++;
+        if (conf.log.log_workers_num>0 && (workersAlive % conf.log.log_workers_num==0 || workersAlive==conf.scheduler.max_worker))
+        {
+            console.log((new Date()).toUTCString(), ">\tWorkers reached "+workersAlive);
+        }
+        process.nextTick(work);
+    }
+}
+module.exports=batchWorkers;
+
 function validateURL(urlval)
 {
     var hn=(url.parse(urlval)).hostname;
@@ -145,9 +169,15 @@ function work()
                 {
                     db[RAWHTML].update(
                     {
-                        $set: {status: 3}
+                        $set:
+                        {
+                            status: 3,
+                            //content: xxx,
+                            title: dataInHier[html.Hierarchy.title]
+                        }
                     }, {multi: false}, function()
                     {
+                        console.log((new Date()).toUTCString(), ">\tparsed content from "+doc.URL);
                         process.nextTick(work);
                     });
                 }

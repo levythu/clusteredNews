@@ -14,7 +14,7 @@ The raw HTML of each crawled webpage, one entry per page.
             // 3: parsed
             // 999: locked
         raw: [string] // raw content in html of the page.
-        content: [string]   // content of the page
+        content: [string]   // content of the page (currently ignored.)
         title: [string]     // title of the page
         fetchtime: [int]    // UNIX-timestamp for the time when the page was fetched.
         locktime: [int]     // UNIX-timestamp for the time when the entry was locked.
