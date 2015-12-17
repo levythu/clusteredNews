@@ -14,7 +14,7 @@ module.exports=
     {
         // max worker working at the same time.
         max_worker: 500,
-        max_fetches_per_tide: 1000,
+        max_fetches_per_launch: 5000,
 
         spawn_interval_in_seconds: 60
     },

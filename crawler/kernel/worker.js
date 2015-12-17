@@ -37,7 +37,7 @@ module.exports=batchWorkers;
 
 function work()
 {
-    if (fetchCount>conf.scheduler.max_fetches_per_tide)
+    if (fetchCount>=conf.scheduler.max_fetches_per_launch)
         return;
 
     db[RAWHTML].findAndModify({
@@ -90,9 +90,20 @@ function work()
                         url: content
                     },
                     {
-                        $set: {status: 0}
-                    }, {upsert: true}, function()
+                        $set: {useless: false}
+                    }, {upsert: true}, function(err, res)
                     {
+                        if (err==null && res.upserted!=null)
+                        {
+                            db[RAWHTML].update({url: content},
+                            {
+                                $set: {status: 0}
+                            }, {}, function()
+                            {
+                                process.nextTick(work);
+                            });
+                            return;
+                        }
                         process.nextTick(work);
                     });
                 });
