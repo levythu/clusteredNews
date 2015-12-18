@@ -58,7 +58,7 @@ function GETF(url, onSucc, onFail, ttl)
             }
             process.nextTick(function()
             {
-                GETF(url, onSucc, onFail, ttl-1);
+                GETF(res.headers.location, onSucc, onFail, ttl-1);
             });
             return;
         }
@@ -68,6 +68,7 @@ function GETF(url, onSucc, onFail, ttl)
             onFail();
             return;
         }
+        // TODO: set encoding according to content-type
         res.setEncoding('utf8');
         var body="";
         res.on('data', function(chunk)

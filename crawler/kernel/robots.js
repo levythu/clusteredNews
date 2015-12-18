@@ -101,8 +101,8 @@ function getROBOTS_TXT(targetURL, callback)
             callback(judge(targetURL, obj.rules));
         }, function()
         {
-            fetchTime=Date.now();
-            rules=[];
+            obj.fetchTime=Date.now();
+            obj.rules=[];
             obj.mutex.Unlock();
             console.log((new Date()).toUTCString(), ">\tFetched RobotsRule "+tName);
             callback(judge(targetURL, obj.rules));
