@@ -27,8 +27,8 @@ The raw HTML of each crawled webpage, one entry per page.
 The term-document sparse matrix, one document per entry.
 ### Schema
     {
-        __url__ [string]   // full url of the page, can be joined with rawhtml
-        __id__[string]     // unique id
+        __url__: [string]   // full url of the page, can be joined with rawhtml
+        __id__: [string]     // unique id
         __newsTime__: [string]  // yyyymmdd of the newspage created. If not a timed page, the value is empty
         [K]: [int/float]    // the value of matrix[url][k]
     }
@@ -37,9 +37,8 @@ The term-document sparse matrix, one document per entry.
 Network topology for crawled websites
 ### Schema
     {
-        __url__ [string]   // full url of the page, can be joined with rawhtml
-        __id__[string]     // unique id
-        [url]: [int]    // the url is referred by the page, its value is currently useless
+        fromurl: [string]  
+        tourl: [string]
     }
 *******************************************************************************/
 var conf=require("../conf/configure");

@@ -166,10 +166,7 @@ function work()
         html.parse(doc.raw, function(dataInHier, urlList, pContent)
         {
             // parse HTML successfully
-            var topo={
-                __url__: doc.url,
-                __id__: doc._id
-            };
+            var topo=[];
             var validList=[];
             for (var i=0; i<urlList.length; i++)
             {
@@ -177,7 +174,10 @@ function work()
                 if (validateURL(res))
                 {
                     res=removeHash(res);
-                    topo[res]=1;
+                    topo.push({
+                        fromurl: doc.url,
+                        tourl: res
+                    });
                     validList.push(res);
                 }
             }
@@ -210,12 +210,15 @@ function work()
             // now start three concurrent routine: updating new url to db, split words and check them in,
             // and recording topology to db.
             chainInsert(validList, 0, theEnd);
-            db[NETTOPO].update(
+            db[NETTOPO].remove(
             {
-                __url__: doc.url
-            }, topo, {upsert: true}, function()
+                fromurl: doc.url
+            }, {}, function()
             {
-                theEnd();
+                db[NETTOPO].insert(topo, function()
+                {
+                    theEnd();
+                });
             });
             countWords(dataInHier, function(wordsMap)
             {
