@@ -127,6 +127,16 @@ function countWords(contentInHier, callback)
     callback(result);
 }
 
+// if the url path starts with "/yyyy/mm/dd" (cnn style), fetch it. otherwise returns empty string
+function getPrefixDate(theURL)
+{
+    var path=url.parse(theURL).path;
+    var res=/^\/(\d\d\d\d)\/(\d\d)\/(\d\d)/.exec(path);
+    if (res==null)
+        return "";
+    return res[1]+res[2]+res[3];
+}
+
 function work()
 {
     db[RAWHTML].findAndModify({
@@ -142,7 +152,8 @@ function work()
         fields:
         {
             url: true,
-            raw: true
+            raw: true,
+            _id: true
         }
     }, function(err, doc)
     {
@@ -151,10 +162,14 @@ function work()
             reportDeath();
             return;
         }
-        html.parse(doc.raw, function(dataInHier, urlList)
+        var vTime=getPrefixDate(doc.url);
+        html.parse(doc.raw, function(dataInHier, urlList, pContent)
         {
             // parse HTML successfully
-            var topo={url: doc.url};
+            var topo={
+                __url__: doc.url,
+                __id__: doc._id
+            };
             var validList=[];
             for (var i=0; i<urlList.length; i++)
             {
@@ -175,11 +190,15 @@ function work()
                 {
                     db[RAWHTML].update(
                     {
+                        url: doc.url
+                    },
+                    {
                         $set:
                         {
                             status: 3,
-                            //content: xxx,
-                            title: dataInHier[html.Hierarchy.title]
+                            content: pContent,
+                            title: dataInHier[html.Hierarchy.title],
+                            newsTime: vTime
                         }
                     }, {multi: false}, function()
                     {
@@ -200,7 +219,9 @@ function work()
             });
             countWords(dataInHier, function(wordsMap)
             {
-                wordsMap["__URL__"]=doc.url;
+                wordsMap["__url__"]=doc.url;
+                wordsMap["__id__"]=doc._id;
+                wordsMap["__newsTime__"]=vTime;
                 db[RESMATX].update(
                 {
                     __URL__: doc.url

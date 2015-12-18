@@ -20,9 +20,10 @@ var Hierarchy=
 };
 function parse(content, callback, onerror)
 {
-    hStack=[];
-    result=[];
-    hrefList=[];
+    var hStack=[];
+    var result=[];
+    var hrefList=[];
+    var pContent="";
     for (var i=0; i<=Hierarchy.MAX_H; i++)
         result.push("");
     var parser = new htmlparser.Parser(
@@ -46,6 +47,7 @@ function parse(content, callback, onerror)
     	ontext: function(text)
         {
             var h=hStack.length==0?Hierarchy.MAX_H:hStack[hStack.length-1];
+            pContent+="\n"+text;
             result[h]+=" "+text;
     	},
     	onclosetag: function(tagname)
@@ -64,7 +66,7 @@ function parse(content, callback, onerror)
     	},
         onend: function()
         {
-            callback(result, hrefList);
+            callback(result, hrefList, pContent);
         },
         onerror: function(err)
         {
