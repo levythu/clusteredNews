@@ -12,6 +12,8 @@ The raw HTML of each crawled webpage, one entry per page.
             // 1: content outdated (0/1 should be equally treated when fetching)
             // 2: fetched but not parsed
             // 3: parsed
+            // 901: temporarily bad, try to fetch it in the future
+            // 902: permanantly bad, never fetch it again
             // 999: locked
         raw: [string] // raw content in html of the page.
         content: [string]   // content of the page (currently ignored.)
@@ -24,7 +26,7 @@ The raw HTML of each crawled webpage, one entry per page.
 The term-document sparse matrix, one document per entry.
 ### Schema
     {
-        __url__: [string]   // full url of the page, can be joined with rawhtml
+        __url#__ [string]   // full url of the page, can be joined with rawhtml
         [K]: [int/float]    // the value of matrix[url][k]
     }
 
