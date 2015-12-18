@@ -19,6 +19,8 @@ function reportDeath()
     {
         console.log((new Date()).toUTCString(), ">\tWorkers died to "+workersAlive);
     }
+    if (workersAlive==0 && conf.scheduler.exit_on_zero===true)
+        process.exit(0);
 }
 function batchWorkers()
 {

@@ -4,4 +4,5 @@
 var worker=require("./worker");
 var configure=require("../conf/configure");
 
+conf.scheduler.exit_on_zero=true;
 worker();
