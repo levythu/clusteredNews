@@ -36,12 +36,12 @@ module.exports=
 
         // if launch the crawler in entry.js, the time indicates the interval (in seconds) of
         // each batch.
-        spawn_interval_in_seconds: 1
+        spawn_interval_in_seconds: 60
     },
     log:
     {
         // if the value>0, when the number of workers can be divided by the value or reached max, the event is logged.
         // if the value=0, the number of workers will not trigger any logging.
-        log_workers_num: 100
+        log_workers_num: 1
     }
 }
