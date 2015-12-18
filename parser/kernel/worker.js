@@ -212,7 +212,7 @@ function work()
             chainInsert(validList, 0, theEnd);
             db[NETTOPO].update(
             {
-                url: doc.url
+                __url__: doc.url
             }, topo, {upsert: true}, function()
             {
                 theEnd();
@@ -224,7 +224,7 @@ function work()
                 wordsMap["__newsTime__"]=vTime;
                 db[RESMATX].update(
                 {
-                    __URL__: doc.url
+                    __url__: doc.url
                 }, wordsMap, {upsert: true}, function()
                 {
                     theEnd();
