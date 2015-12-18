@@ -29,6 +29,7 @@ The term-document sparse matrix, one document per entry.
     {
         __url__ [string]   // full url of the page, can be joined with rawhtml
         __id__[string]     // unique id
+        __newsTime__: [string]  // yyyymmdd of the newspage created. If not a timed page, the value is empty
         [K]: [int/float]    // the value of matrix[url][k]
     }
 
