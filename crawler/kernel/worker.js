@@ -1,7 +1,7 @@
 // Worker module. When launched, it will batch some urls unfetched in the database
 // and request them, then store back. The number of workers are limited.
 
-var request=require("./request");
+var robotreq=require("./robotsFilteredRequest");
 var conf=require("../conf/configure");
 
 var model=require("../model/mongo");
@@ -70,7 +70,7 @@ function work()
             return;
         }
         fetchCount++;
-        request.GET(doc.url, function(isContent, content)
+        robotreq.GET(doc.url, function(isContent, content)
         {
             var now=new Date();
             console.log(now.toUTCString(), ">\tFetched URL "+doc.url);
