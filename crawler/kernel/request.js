@@ -1,7 +1,7 @@
 // http request module. Maybe altered to proxy via SOCKS5.
 
 var http=require("http");
-var conf.max_redirect_allowed=require("../conf/configure");
+var conf=require("../conf/configure");
 
 function GET(url, onSucc, onFail)
 {

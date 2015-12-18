@@ -39,14 +39,14 @@ function getROBOTS_TXT(targetURL, callback)
         };
     }
     var obj=globalCache[tName];
-    if (obj.rules!=null && (robotsExpTime<0 || robotsExpTime+obj.fetchtime<=Date.now()))
+    if (obj.rules!=null && (robotsExpTime<0 || robotsExpTime+obj.fetchtime>=Date.now()))
     {
         callback(judge(targetURL, obj.rules));
         return;
     }
     obj.mutex.Lock(function()
     {
-        if (obj.rules!=null && (robotsExpTime<0 || robotsExpTime+obj.fetchtime<=Date.now()))
+        if (obj.rules!=null && (robotsExpTime<0 || robotsExpTime+obj.fetchtime>=Date.now()))
         {
             obj.mutex.Unlock();
             callback(judge(targetURL, obj.rules));
@@ -80,7 +80,7 @@ function getROBOTS_TXT(targetURL, callback)
                     {
                         obj.rules.push([false, compensateRule(mc[1])]);
                     }
-                    catch ()
+                    catch (e)
                     { }
                     continue;
                 }
@@ -91,24 +91,43 @@ function getROBOTS_TXT(targetURL, callback)
                     {
                         obj.rules.push([true, compensateRule(mc[1])]);
                     }
-                    catch ()
+                    catch (e)
                     { }
                     continue;
                 }
             }
             obj.mutex.Unlock();
+            console.log((new Date()).toUTCString(), ">\tFetched RobotsRule "+tName);
             callback(judge(targetURL, obj.rules));
         }, function()
         {
             fetchTime=Date.now();
             rules=[];
             obj.mutex.Unlock();
+            console.log((new Date()).toUTCString(), ">\tFetched RobotsRule "+tName);
             callback(judge(targetURL, obj.rules));
         });
     });
 }
 
-module.exports=function(targetURL, ifAllowed, ifDenied)
-{
+module.exports=getROBOTS_TXT;
 
-}
+(function()
+{
+    getROBOTS_TXT("http://edition.cnn.com/2015/12/17/middleeast/syria-russian-warship-moskva/index.html", function(a)
+    {
+        console.log(a);
+    });
+    getROBOTS_TXT("http://edition.cnn.com", function(a)
+    {
+        console.log(a);
+    });
+    getROBOTS_TXT("http://edition.cnn.com/partners/ipad/live-video.json?asd", function(a)
+    {
+        console.log(a);
+    });
+    getROBOTS_TXT("http://edition.cnn.com/partners/ipod", function(a)
+    {
+        console.log(a);
+    });
+});
