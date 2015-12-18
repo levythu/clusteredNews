@@ -78,14 +78,16 @@ function parse(content, callback, onerror)
 exports.parse=parse;
 exports.Hierarchy=Hierarchy;
 
-/*
-request.GET("http://www.levy.at/me?lang=en-us", function(isCon, data)
+
+(function()
 {
-    console.log("stparse");
-    parse(data, function(r, h)
+    request.GET("http://www.levy.at/me?lang=en-us", function(isCon, data)
     {
-        console.log(r);
-        console.log(h);
+        console.log("stparse");
+        parse(data, function(r, h)
+        {
+            console.log(r);
+            console.log(h);
+        });
     });
 });
-*/

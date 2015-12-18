@@ -16,7 +16,7 @@ module.exports=
     scheduler:
     {
         // max worker working at the same time.
-        max_worker: 10,
+        max_worker: 1,
 
         spawn_interval_in_seconds: 60
     },

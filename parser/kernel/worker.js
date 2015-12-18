@@ -66,42 +66,31 @@ function chainInsert(inputList, pos, callback)
         callback();
         return;
     }
-    db[RAWHTML].update({url: doc.url},
+    db[RAWHTML].update(
     {
-        $set:
-        {
-            status: 2,
-            raw: "",
-            fetchtime: now.getTime()
-        }
-    }, {multi: false}, function()
+        url: inputList[pos]
+    },
     {
-        db[RAWHTML].update(
+        $set: {useless: false}
+    }, {upsert: true}, function(err, res)
+    {
+        if (err==null && res.upserted!=null)
         {
-            url: inputList[pos]
-        },
-        {
-            $set: {useless: false}
-        }, {upsert: true}, function(err, res)
-        {
-            if (err==null && res.upserted!=null)
+            db[RAWHTML].update({url: inputList[pos]},
             {
-                db[RAWHTML].update({url: inputList[pos]},
+                $set: {status: 0}
+            }, {}, function()
+            {
+                process.nextTick(function()
                 {
-                    $set: {status: 0}
-                }, {}, function()
-                {
-                    process.nextTick(function()
-                    {
-                        chainInsert(inputList, pos+1, callback);
-                    });
+                    chainInsert(inputList, pos+1, callback);
                 });
-                return;
-            }
-            process.nextTick(function()
-            {
-                chainInsert(inputList, pos+1, callback);
             });
+            return;
+        }
+        process.nextTick(function()
+        {
+            chainInsert(inputList, pos+1, callback);
         });
     });
 }
@@ -177,7 +166,7 @@ function work()
                         }
                     }, {multi: false}, function()
                     {
-                        console.log((new Date()).toUTCString(), ">\tparsed content from "+doc.URL);
+                        console.log((new Date()).toUTCString(), ">\tparsed content from "+doc.url);
                         process.nextTick(work);
                     });
                 }
@@ -195,7 +184,7 @@ function work()
             countWords(dataInHier, function(wordsMap)
             {
                 wordsMap["__URL__"]=doc.url;
-                db[RESMATX].upload(
+                db[RESMATX].update(
                 {
                     __URL__: doc.url
                 }, wordsMap, {upsert: true}, function()
