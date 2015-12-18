@@ -96,6 +96,12 @@ function chainInsert(inputList, pos, callback)
         });
     });
 }
+function removeHash(u)
+{
+    var t=url.parse(u);
+    t.hash="";
+    return url.format(t)
+}
 
 function countWords(contentInHier, callback)
 {
@@ -155,6 +161,7 @@ function work()
                 var res=url.resolve(doc.url, urlList[i]);
                 if (validateURL(res))
                 {
+                    res=removeHash(res);
                     topo[res]=1;
                     validList.push(res);
                 }

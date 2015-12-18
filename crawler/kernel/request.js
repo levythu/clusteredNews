@@ -125,9 +125,9 @@ exports.GETF=GETF;
 
 (function()
 {
-    exports.GET("http://www.levy.at", function()
+    exports.GET("http://www.cnn.com/", function()
     {
-        console.log(arguments);
+        console.log(arguments[0]);
     }, function(err)
     {
         console.log("FAIL.");
