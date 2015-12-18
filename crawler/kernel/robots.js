@@ -25,6 +25,31 @@ function judge(tURL, robotInfo)
             return robotInfo[i][0];
     return true;
 };
+
+var tDelay=conf.worker.robots_in_one_domain_interval_in_ms;
+function controlAccess(targetURL, callback)
+{
+    if (tDelay<=0)
+    {
+        callback();
+        return;
+    }
+    var tName=url.resolve(targetURL, "/robots.txt");
+    if (!(tName in globalCache))
+    {
+        callback();
+        return;
+    }
+    var obj=globalCache[tName];
+    obj.delayControl.Lock(function()
+    {
+        setTimeout(function()
+        {
+            obj.delayControl.Unlock();
+            callback();
+        }, tDelay);
+    });
+}
 function getROBOTS_TXT(targetURL, callback)
 {
     var tName=url.resolve(targetURL, "/robots.txt");
@@ -33,6 +58,7 @@ function getROBOTS_TXT(targetURL, callback)
         globalCache[tName]=
         {
             mutex: new lock(),
+            delayControl: new lock(conf.worker.robots_in_one_domain_concurrency),
             fetchtime: 0,
             rules: null
         };
@@ -109,7 +135,8 @@ function getROBOTS_TXT(targetURL, callback)
     });
 }
 
-module.exports=getROBOTS_TXT;
+exports.robotsCheck=getROBOTS_TXT;
+exports.controlAccess=controlAccess;
 
 (function()
 {

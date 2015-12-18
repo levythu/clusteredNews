@@ -10,7 +10,14 @@ module.exports=
     worker:
     {
         // the robots.txt info cached will expire within the time. If <0, no expiration time
-	    robots_info_expire_in_seconds: 24*60*60
+	    robots_info_expire_in_seconds: 24*60*60,
+
+        robots_in_one_domain_interval_in_ms: 5000,
+
+        robots_in_one_domain_concurrency: 1,
+
+        // if the value=0, no time out is set.
+        fetch_time_out_in_ms: 100000
     },
     request:
     {
@@ -21,7 +28,7 @@ module.exports=
     {
         // max worker working at the same time, when batching workers, the number of living
         // workers will be supplemented to this value.
-        max_worker: 500,
+        max_worker: 10,
 
         // if the value >=0, it indicates the max number of pages that can be fetched within one batch.
         // if the value <0, no limitation is set.
@@ -29,7 +36,7 @@ module.exports=
 
         // if launch the crawler in entry.js, the time indicates the interval (in seconds) of
         // each batch.
-        spawn_interval_in_seconds: 60
+        spawn_interval_in_seconds: 1
     },
     log:
     {

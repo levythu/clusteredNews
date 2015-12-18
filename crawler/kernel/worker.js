@@ -72,7 +72,7 @@ function work()
             return;
         }
         fetchCount++;
-        console.log(doc.url);
+        //console.log(doc.url);
         robotreq.GET(doc.url, function(isContent, content)
         {
             var now=new Date();

@@ -5,13 +5,19 @@ var conf=require("../conf/configure");
 
 function GET(url, onSucc, onFail)
 {
-    request({
+    //console.log("GET ", url);
+    var opt=
+    {
         url: url,
         followRedirect: false
-    }, function(error, response, body)
+    };
+    if (conf.worker.fetch_time_out_in_ms>0)
+        opt.timeout=conf.worker.fetch_time_out_in_ms;
+    request(opt, function(error, response, body)
     {
         if (error)
         {
+            //console.log("GET fail ", url);
             onFail();
             return;
         }
@@ -20,19 +26,30 @@ function GET(url, onSucc, onFail)
         {
             if (response.headers.location==null)
             {
+                //console.log("GET fail ", url);
                 onFail();
                 return;
             }
+            //console.log("GET succ ", url);
             onSucc(false, response.headers.location);
             return;
         }
         var status=""+status;
         if (status[0]=="4")
+        {
+            //console.log("GET fail ", url);
             onFail(true);
+        }
         else if (status[0]=="5")
+        {
+            //console.log("GET fail ", url);
             onFail();
+        }
         else
+        {
+            //console.log("GET succ ", url);
             onSucc(true, body);
+        }
     });
 }
 
@@ -45,10 +62,14 @@ function GETF(url, onSucc, onFail, ttl)
         onFail();
         return;
     }
-    request({
+    var opt=
+    {
         url: url,
         followRedirect: false
-    }, function(error, response, body)
+    };
+    if (conf.worker.fetch_time_out_in_ms>0)
+        opt.timeout=conf.worker.fetch_time_out_in_ms;
+    request(opt, function(error, response, body)
     {
         if (error)
         {

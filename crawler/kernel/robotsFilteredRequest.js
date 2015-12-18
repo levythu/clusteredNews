@@ -1,14 +1,17 @@
 var request=require("./request");
-var robotsCheck=require("./robots");
+var robots=require("./robots");
 
 function GET(url, onSucc, onFail)
 {
-    robotsCheck(url, function(res)
+    robots.robotsCheck(url, function(res)
     {
         if (!res)
             onFail();
         else
-            request.GET(url, onSucc, onFail);
+            robots.controlAccess(url, function()
+            {
+                request.GET(url, onSucc, onFail);
+            });
     });
 }
 
