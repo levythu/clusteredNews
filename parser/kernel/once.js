@@ -2,7 +2,7 @@
 // also the entry of the parser.
 
 var worker=require("./worker");
-var configure=require("../conf/configure");
+var conf=require("../conf/configure");
 
 conf.scheduler.exit_on_zero=true;
 worker();
