@@ -105,7 +105,15 @@ function countWords(contentInHier, callback)
         {
             if (!(tRes[j] in result))
                 result[tRes[j]]=0;
-            result[tRes[j]]++;
+            if (i==0)
+            {
+                // title!
+                result[tRes[j]]+=10;
+            }
+            else
+            {
+                result[tRes[j]]++;
+            }
         }
     }
     callback(result);

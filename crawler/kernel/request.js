@@ -15,8 +15,12 @@ function GET(url, onSucc, onFail)
     // config for Shadowsocks
     if (conf.worker.socks5_host!=null)
     {
-        opt.socksHost=conf.worker.socks5_host;
-        opt.socksPort=conf.worker.socks5_port;
+        opt.agentClass=Agent,
+        opt.agentOptions=
+        {
+            socksHost: conf.worker.socks5_host,
+            socksPort: conf.worker.socks5_port
+        }
     }
     if (conf.worker.fetch_time_out_in_ms>0)
         opt.timeout=conf.worker.fetch_time_out_in_ms;
@@ -74,6 +78,17 @@ function GETF(url, onSucc, onFail, ttl)
         url: url,
         followRedirect: false
     };
+
+    // config for Shadowsocks
+    if (conf.worker.socks5_host!=null)
+    {
+        opt.agentClass=Agent,
+        opt.agentOptions=
+        {
+            socksHost: conf.worker.socks5_host,
+            socksPort: conf.worker.socks5_port
+        }
+    }
     if (conf.worker.fetch_time_out_in_ms>0)
         opt.timeout=conf.worker.fetch_time_out_in_ms;
     request(opt, function(error, response, body)
@@ -108,13 +123,14 @@ function GETF(url, onSucc, onFail, ttl)
 exports.GET=GET;
 exports.GETF=GETF;
 
-/*
-exports.GET("http://edition.cnn.com", function()
+(function()
 {
-    console.log(arguments);
-}, function(err)
-{
-    console.log("FAIL.");
-    console.log(err);
+    exports.GET("http://www.levy.at", function()
+    {
+        console.log(arguments);
+    }, function(err)
+    {
+        console.log("FAIL.");
+        console.log(err);
+    });
 });
-*/
