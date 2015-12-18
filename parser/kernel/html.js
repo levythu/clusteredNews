@@ -81,9 +81,8 @@ exports.Hierarchy=Hierarchy;
 
 (function()
 {
-    request.GET("http://www.levy.at/me?lang=en-us", function(isCon, data)
+    request.GET("http://edition.cnn.com", function(isCon, data)
     {
-        console.log("stparse");
         parse(data, function(r, h)
         {
             console.log(r);
