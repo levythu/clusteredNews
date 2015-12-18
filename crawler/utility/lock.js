@@ -26,7 +26,7 @@ Lock.prototype.Unlock=function()
 {
     if (this.waitingQueue.len>0)
     {
-        (this.waitingQueue.DeQueue())();
+        process.nextTick(this.waitingQueue.DeQueue());
         return;
     }
     this.rest++;

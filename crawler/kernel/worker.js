@@ -35,9 +35,10 @@ function batchWorkers()
 }
 module.exports=batchWorkers;
 
+var maxFetches=conf.scheduler.max_fetches_per_launch;
 function work()
 {
-    if (fetchCount>=conf.scheduler.max_fetches_per_launch)
+    if (maxFetches>=0 && fetchCount>=maxFetches)
         return;
 
     db[RAWHTML].findAndModify({
