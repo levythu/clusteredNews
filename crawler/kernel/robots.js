@@ -27,7 +27,6 @@ function judge(tURL, robotInfo)
 };
 function getROBOTS_TXT(targetURL, callback)
 {
-
     var tName=url.resolve(targetURL, "/robots.txt");
     if (!(tName in globalCache))
     {
@@ -101,10 +100,10 @@ function getROBOTS_TXT(targetURL, callback)
             callback(judge(targetURL, obj.rules));
         }, function()
         {
-            obj.fetchTime=Date.now();
+            obj.fetchtime=Date.now();
             obj.rules=[];
             obj.mutex.Unlock();
-            console.log((new Date()).toUTCString(), ">\tFetched RobotsRule "+tName);
+            console.log((new Date()).toUTCString(), ">\tFetched RobotsRule(Empty) "+tName);
             callback(judge(targetURL, obj.rules));
         });
     });

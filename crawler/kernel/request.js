@@ -1,38 +1,38 @@
 // http request module. Maybe altered to proxy via SOCKS5.
 
-var http=require("http");
+var request=require("request");
 var conf=require("../conf/configure");
 
 function GET(url, onSucc, onFail)
 {
-    http.get(url, function(res)
+    request({
+        url: url,
+        followRedirect: false
+    }, function(error, response, body)
     {
-        var status=res.statusCode;
+        if (error)
+        {
+            onFail();
+            return;
+        }
+        var status=response.statusCode;
         if (status==301 || status==302)
         {
-            // Move temporarily/permanantly
-            if (res.headers.location==null)
+            if (response.headers.location==null)
             {
                 onFail();
                 return;
             }
-            onSucc(false, res.headers.location);
+            onSucc(false, response.headers.location);
             return;
         }
-        // TODO: set encoding according to content-type
-        res.setEncoding('utf8');
-        var body="";
-        res.on('data', function(chunk)
-        {
-            body+=chunk;
-        });
-        res.on('end', function()
-        {
+        var status=""+status;
+        if (status[0]=="4")
+            onFail(true);
+        else if (status[0]=="5")
+            onFail();
+        else
             onSucc(true, body);
-        });
-    }).on("error", function(err)
-    {
-        onFail(err);
     });
 }
 
@@ -45,43 +45,35 @@ function GETF(url, onSucc, onFail, ttl)
         onFail();
         return;
     }
-    http.get(url, function(res)
+    request({
+        url: url,
+        followRedirect: false
+    }, function(error, response, body)
     {
-        var status=res.statusCode;
+        if (error)
+        {
+            onFail();
+            return;
+        }
+        var status=response.statusCode;
         if (status==301 || status==302)
         {
-            // Move temporarily/permanantly
-            if (res.headers.location==null)
+            if (response.headers.location==null)
             {
                 onFail();
                 return;
             }
             process.nextTick(function()
             {
-                GETF(res.headers.location, onSucc, onFail, ttl-1);
+                GETF(response.headers.location, onSucc, onFail, ttl-1);
             });
             return;
         }
-        var statusABS=status%100;
-        if (statusABS==4 || statusABS==5)
-        {
+        var status=""+status;
+        if (status[0]=="4" || status[0]=="5")
             onFail();
-            return;
-        }
-        // TODO: set encoding according to content-type
-        res.setEncoding('utf8');
-        var body="";
-        res.on('data', function(chunk)
-        {
-            body+=chunk;
-        });
-        res.on('end', function()
-        {
+        else
             onSucc(body);
-        });
-    }).on("error", function(err)
-    {
-        onFail(err);
     });
 }
 

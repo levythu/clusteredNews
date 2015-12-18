@@ -18,6 +18,8 @@ function reportDeath()
     {
         console.log((new Date()).toUTCString(), ">\tWorkers died to "+workersAlive);
     }
+    if (workersAlive==0 && conf.scheduler.exit_on_zero===true)
+        process.exit(0);
 }
 function batchWorkers()
 {
@@ -70,6 +72,7 @@ function work()
             return;
         }
         fetchCount++;
+        console.log(doc.url);
         robotreq.GET(doc.url, function(isContent, content)
         {
             var now=new Date();
@@ -122,11 +125,18 @@ function work()
             {
                 process.nextTick(work);
             });
-        }, function()
+        }, function(neverAgain)
         {
+            var sToset=901;
+            if (neverAgain)
+                sToset=902;
             db[RAWHTML].update({url: doc.url},
             {
-                $set: {status: 0}
+                $set:
+                {
+                    status: sToset,
+                    fetchtime: Date.now()
+                }
             }, {multi: false}, function()
             {
                 process.nextTick(work);
