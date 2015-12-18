@@ -23,7 +23,7 @@ function reportDeath()
 function batchWorkers()
 {
     console.log((new Date()).toUTCString(), ">\tSpawn launched");
-    while (workersAlive<=conf.scheduler.max_worker)
+    while (workersAlive<conf.scheduler.max_worker)
     {
         workersAlive++;
         if (conf.log.log_workers_num>0 && (workersAlive % conf.log.log_workers_num==0 || workersAlive==conf.scheduler.max_worker))
