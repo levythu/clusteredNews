@@ -12,12 +12,18 @@ module.exports=
         // the robots.txt info cached will expire within the time. If <0, no expiration time
 	    robots_info_expire_in_seconds: 24*60*60,
 
+        // in order to avoid being banned, requests to one certain domain are emitted in a limited rate
+        // if set to zero, no limitation is set.
         robots_in_one_domain_interval_in_ms: 5000,
-
         robots_in_one_domain_concurrency: 1,
 
         // if the value=0, no time out is set.
-        fetch_time_out_in_ms: 100000
+        fetch_time_out_in_ms: 100000,
+
+        // if set to null, no proxy is used.
+        // otherwise, socks5 protocal is adopted.
+        socks5_host: "127.0.0.1",
+        socks5_port: 1080
     },
     request:
     {

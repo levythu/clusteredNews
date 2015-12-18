@@ -2,6 +2,7 @@
 
 var request=require("request");
 var conf=require("../conf/configure");
+var Agent = require('socks5-http-client/lib/Agent');
 
 function GET(url, onSucc, onFail)
 {
@@ -11,6 +12,12 @@ function GET(url, onSucc, onFail)
         url: url,
         followRedirect: false
     };
+    // config for Shadowsocks
+    if (conf.worker.socks5_host!=null)
+    {
+        opt.socksHost=conf.worker.socks5_host;
+        opt.socksPort=conf.worker.socks5_port;
+    }
     if (conf.worker.fetch_time_out_in_ms>0)
         opt.timeout=conf.worker.fetch_time_out_in_ms;
     request(opt, function(error, response, body)
