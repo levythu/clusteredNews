@@ -1,0 +1,12 @@
+{
+  "name": "Clustered-News-Crawler",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+    "mongojs": "~0.17.0",
+    "mongodb": "~1.4.19",
+    "thunky": "~0.1.0"
+  }
+}
