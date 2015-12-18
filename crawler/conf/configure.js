@@ -10,7 +10,7 @@ module.exports=
     worker:
     {
         // the robots.txt info cached will expire within the time. If <0, no expiration time
-	    robots_info_expire_in_seconds: 24*60*60,
+        robots_info_expire_in_seconds: 24*60*60,
 
         // in order to avoid being banned, requests to one certain domain are emitted in a limited rate
         // if set to zero, no limitation is set.

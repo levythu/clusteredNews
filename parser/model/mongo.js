@@ -18,6 +18,7 @@ The raw HTML of each crawled webpage, one entry per page.
         raw: [string] // raw content in html of the page.
         content: [string]   // content of the page (currently ignored.)
         title: [string]     // title of the page
+        newsTime: [string]  // yyyymmdd of the newspage created. If not a timed page, the value is empty
         fetchtime: [int]    // UNIX-timestamp for the time when the page was fetched.
         locktime: [int]     // UNIX-timestamp for the time when the entry was locked.
     }
@@ -26,23 +27,24 @@ The raw HTML of each crawled webpage, one entry per page.
 The term-document sparse matrix, one document per entry.
 ### Schema
     {
-        __url#__ [string]   // full url of the page, can be joined with rawhtml
+        __url__ [string]   // full url of the page, can be joined with rawhtml
+        __id__[string]     // unique id
         [K]: [int/float]    // the value of matrix[url][k]
     }
 
-## rules
-The rule for different websites crawled in robots.txt
+## nettopo
+Network topology for crawled websites
 ### Schema
     {
-        hostname: [string]
-        rules: [(bool, urlrule)]
-        fetchtime: [int]
+        __url__ [string]   // full url of the page, can be joined with rawhtml
+        __id__[string]     // unique id
+        [url]: [int]    // the url is referred by the page, its value is currently useless
     }
 *******************************************************************************/
 var conf=require("../conf/configure");
 var mongojs=require('mongojs');
 
-var collections=["rawhtml", "nettopo", "terms", "rules"];
+var collections=["rawhtml", "nettopo", "terms"];
 var db=mongojs(conf.database.access_schema, collections);
 
 for (var i=0; i<collections.length; i++)
