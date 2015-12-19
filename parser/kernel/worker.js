@@ -134,10 +134,11 @@ function countWords(contentInHier, callback)
 }
 
 // if the url path starts with "/yyyy/mm/dd" (cnn style), fetch it. otherwise returns empty string
+// UPDATE: inside the path is ok.
 function getPrefixDate(theURL)
 {
     var path=url.parse(theURL).path;
-    var res=/^\/(\d\d\d\d)\/(\d\d)\/(\d\d)/.exec(path);
+    var res=/\/(\d\d\d\d)\/(\d\d)\/(\d\d)/.exec(path);
     if (res==null)
         return "";
     return res[1]+res[2]+res[3];
