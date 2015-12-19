@@ -12,6 +12,9 @@ var NETTOPO=model.nettopo;
 var RESMATX=model.terms;
 
 var workersAlive=0;
+var urlsQuota=0;
+var urlsAllowed=conf.scheduler.max_new_urls_per_launch;
+
 function reportDeath()
 {
     workersAlive--;
@@ -25,6 +28,8 @@ function reportDeath()
 function batchWorkers()
 {
     console.log((new Date()).toUTCString(), ">\tSpawn launched");
+    if (urlsAllowed>=0)
+        urlsQuota=urlsAllowed;
     while (workersAlive<conf.scheduler.max_worker)
     {
         workersAlive++;
@@ -78,6 +83,7 @@ function chainInsert(inputList, pos, callback)
     {
         if (err==null && res.upserted!=null)
         {
+            urlsQuota--;
             db[RAWHTML].update({url: inputList[pos]},
             {
                 $set: {status: 0}
@@ -178,7 +184,8 @@ function work()
                         fromurl: doc.url,
                         tourl: res
                     });
-                    validList.push(res);
+                    if (urlsAllowed<0 || urlsQuota>0)
+                        validList.push(res);
                 }
             }
             // Defining the end point.
