@@ -37,7 +37,7 @@ The term-document sparse matrix, one document per entry.
 Network topology for crawled websites
 ### Schema
     {
-        fromurl: [string]  
+        fromurl: [string]
         tourl: [string]
     }
 *******************************************************************************/
