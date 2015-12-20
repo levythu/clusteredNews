@@ -45,7 +45,7 @@ function GET(url, onSucc, onFail)
             onSucc(false, response.headers.location);
             return;
         }
-        var status=""+status;
+        status=""+status;
         if (status[0]=="4")
         {
             //console.log("GET fail ", url);
@@ -82,7 +82,7 @@ function GETF(url, onSucc, onFail, ttl)
     // config for Shadowsocks
     if (conf.worker.socks5_host!=null)
     {
-        opt.agentClass=Agent,
+        opt.agentClass=Agent;
         opt.agentOptions=
         {
             socksHost: conf.worker.socks5_host,
@@ -112,7 +112,7 @@ function GETF(url, onSucc, onFail, ttl)
             });
             return;
         }
-        var status=""+status;
+        status=""+status;
         if (status[0]=="4" || status[0]=="5")
             onFail();
         else
