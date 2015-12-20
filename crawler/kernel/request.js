@@ -15,7 +15,7 @@ function GET(url, onSucc, onFail)
     // config for Shadowsocks
     if (conf.worker.socks5_host!=null)
     {
-        opt.agentClass=Agent,
+        opt.agentClass=Agent;
         opt.agentOptions=
         {
             socksHost: conf.worker.socks5_host,
