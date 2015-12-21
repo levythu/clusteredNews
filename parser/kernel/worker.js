@@ -296,6 +296,9 @@ function work()
             // parsing error;
             db[RAWHTML].update(
             {
+                url: doc.url
+            },
+            {
                 $set: {status: 2}
             }, {multi: false}, function()
             {
