@@ -7,6 +7,20 @@ Periodically scan the database to find all the out-dated, out-locked and tempora
 - Nodejs
 - npm
 
+## Scripts
+
+### `initdb.js`
+Run the script to initialize the database. It will create the collections required and setup indexes for them. However, the `rawhtml` table is still empty, and seed page should be checked in manually.
+
+```sh
+cd scripts
+node initdb.js
+mongo   # Open mongo-cli using proper configuration
+# Mongo Client:
+use cnews
+db.rawhtml.insert({status:0, url:"http://www.cnn.com/"})
+```
+
 ## How to deploy (On Ubuntu 14.04+)
 
 #### Change working directory to `/cruiser/`
