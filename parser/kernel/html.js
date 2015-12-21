@@ -18,12 +18,18 @@ var Hierarchy=
     "h8": 8,
     "others": 9
 };
+var blackList=
+{
+    "script": 0,
+    "style": 0
+};
 function parse(content, callback, onerror)
 {
     var hStack=[];
     var result=[];
     var hrefList=[];
     var pContent="";
+    var scriptTags=0;
     for (var i=0; i<=Hierarchy.MAX_H; i++)
         result.push("");
     var parser = new htmlparser.Parser(
@@ -31,6 +37,8 @@ function parse(content, callback, onerror)
     	onopentag: function(name, attribs)
         {
             var lcName=name.toLowerCase();
+            if (lcName in blackList)
+                scriptTags++;
     		if (lcName in Hierarchy)
             {
                 hStack.push(Hierarchy[lcName]);
@@ -46,6 +54,8 @@ function parse(content, callback, onerror)
     	},
     	ontext: function(text)
         {
+            if (scriptTags>0)
+                return;
             var h=hStack.length==0?Hierarchy.MAX_H:hStack[hStack.length-1];
             pContent+="\n"+text;
             result[h]+=" "+text;
@@ -53,6 +63,8 @@ function parse(content, callback, onerror)
     	onclosetag: function(tagname)
         {
             var lcName=tagname.toLowerCase();
+            if (lcName in blackList)
+                scriptTags--;
     		if (lcName in Hierarchy)
             {
                 var t=hStack.pop();
@@ -83,12 +95,11 @@ exports.Hierarchy=Hierarchy;
 
 (function()
 {
-    request.GET("http://edition.cnn.com", function(isCon, data)
+    request.GET("http://www.cnn.com/2015/12/16/arts/gallery/nassim-rouchiche-ghost-migrants-ca-va/index.html", function(isCon, data)
     {
-        parse(data, function(r, h)
+        parse(data, function(r, h, c)
         {
-            console.log(r);
-            console.log(h);
+            console.log(c);
         });
     });
 });

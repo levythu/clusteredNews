@@ -1,50 +1,135 @@
 // http request module. Maybe altered to proxy via SOCKS5.
-// for test only
 
-var http = require("http");
+var request=require("request");
+var conf=require("../conf/configure");
+var Agent = require('socks5-http-client/lib/Agent');
 
 function GET(url, onSucc, onFail)
 {
-    http.get(url, function(res)
+    //console.log("GET ", url);
+    var opt=
     {
-        var status=res.statusCode;
+        url: url,
+        followRedirect: false
+    };
+    // config for Shadowsocks
+
+        opt.agentClass=Agent;
+        opt.agentOptions=
+        {
+            socksHost: "127.0.0.1",
+            socksPort: 1080
+        }
+
+    if (conf.worker.fetch_time_out_in_ms>0)
+        opt.timeout=conf.worker.fetch_time_out_in_ms;
+    request(opt, function(error, response, body)
+    {
+        if (error)
+        {
+            //console.log("GET fail ", url);
+            onFail();
+            return;
+        }
+        var status=response.statusCode;
         if (status==301 || status==302)
         {
-            // Move temporarily/permanantly
-            if (res.headers.location==null)
+            if (response.headers.location==null)
+            {
+                //console.log("GET fail ", url);
+                onFail();
+                return;
+            }
+            //console.log("GET succ ", url);
+            onSucc(false, response.headers.location);
+            return;
+        }
+        status=""+status;
+        if (status[0]=="4")
+        {
+            //console.log("GET fail ", url);
+            onFail(true);
+        }
+        else if (status[0]=="5")
+        {
+            //console.log("GET fail ", url);
+            onFail();
+        }
+        else
+        {
+            //console.log("GET succ ", url);
+            onSucc(true, body);
+        }
+    });
+}
+
+function GETF(url, onSucc, onFail, ttl)
+{
+    if (ttl==null)
+        ttl=conf.request.default_max_redirect_allowed+1;
+    if (ttl==0)
+    {
+        onFail();
+        return;
+    }
+    var opt=
+    {
+        url: url,
+        followRedirect: false
+    };
+
+    // config for Shadowsocks
+    if (conf.worker.socks5_host!=null)
+    {
+        opt.agentClass=Agent;
+        opt.agentOptions=
+        {
+            socksHost: conf.worker.socks5_host,
+            socksPort: conf.worker.socks5_port
+        }
+    }
+    if (conf.worker.fetch_time_out_in_ms>0)
+        opt.timeout=conf.worker.fetch_time_out_in_ms;
+    request(opt, function(error, response, body)
+    {
+        if (error)
+        {
+            onFail();
+            return;
+        }
+        var status=response.statusCode;
+        if (status==301 || status==302)
+        {
+            if (response.headers.location==null)
             {
                 onFail();
                 return;
             }
-            onSucc(false, res.headers.location);
+            process.nextTick(function()
+            {
+                GETF(response.headers.location, onSucc, onFail, ttl-1);
+            });
             return;
         }
-        // TODO: set encoding according to content-type
-        res.setEncoding('utf8');
-        var body="";
-        res.on('data', function(chunk)
-        {
-            body+=chunk;
-        });
-        res.on('end', function()
-        {
-            onSucc(true, body);
-        });
-    }).on("error", function(err)
-    {
-        onFail(err);
+        status=""+status;
+        if (status[0]=="4" || status[0]=="5")
+            onFail();
+        else
+            onSucc(body);
     });
 }
 
 exports.GET=GET;
+exports.GETF=GETF;
 
-/*
-exports.GET("http://edition.cnn.com", function()
+(function()
 {
-    console.log(arguments);
-}, function(err)
-{
-    console.log("FAIL.");
-    console.log(err);
+    exports.GET("http://www.cnn.com/", function()
+    {
+        console.log(arguments[0]);
+    }, function(err)
+    {
+        console.log("FAIL.");
+        console.log(err);
+    });
 });
-*/
