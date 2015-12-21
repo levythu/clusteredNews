@@ -22,13 +22,13 @@ module.exports=
     {
         // max worker working at the same time, when batching workers, the number of living
         // workers will be supplemented to this value.
-        max_worker: 1,
+        max_worker: 10,
 
         // if the value >=0, it indicates the max number of new urls that can be stored in db within one launch.
         // if the value <0, no limitation is set.
         // The value may not be precise and the actual number of urls checked-in may exceed it, but it does control
         // the trend.
-        max_new_urls_per_launch: -1,
+        max_new_urls_per_launch: 0,
 
         // if launch the crawler in entry.js, the time indicates the interval (in seconds) of
         // each batch.

@@ -37,14 +37,23 @@ The term-document sparse matrix, one document per entry.
 Network topology for crawled websites
 ### Schema
     {
-        fromurl: [string]  
+        fromurl: [string]
         tourl: [string]
+    }
+
+## lex
+Lexical map from original words to stemmed words
+### Schema
+    {
+        original: [string]
+        stemmed: [string]
+        count: [int]
     }
 *******************************************************************************/
 var conf=require("../conf/configure");
 var mongojs=require('mongojs');
 
-var collections=["rawhtml", "nettopo", "terms"];
+var collections=["rawhtml", "nettopo", "terms", "lex"];
 var db=mongojs(conf.database.access_schema, collections);
 
 for (var i=0; i<collections.length; i++)

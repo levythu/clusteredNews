@@ -3,6 +3,7 @@ var html=require("./html");
 var url=require("url");
 
 var natural=require("natural");
+var tokenizer = new natural.WordTokenizer();
 natural.PorterStemmer.attach();
 
 var model=require("../model/mongo");
@@ -10,6 +11,7 @@ var db=model.db;
 var RAWHTML=model.rawhtml;
 var NETTOPO=model.nettopo;
 var RESMATX=model.terms;
+var LEXINFO=model.lex;
 
 var workersAlive=0;
 var urlsQuota=0;
@@ -65,6 +67,30 @@ function validateURL(urlval)
     }
 }
 
+// insert all the elements in the list to lex
+// list: [ori, stm, count]
+function chainInsert_LEX(inputList, pos, callback)
+{
+    if (pos==inputList.length)
+    {
+        callback();
+        return;
+    }
+    db[LEXINFO].update(
+    {
+        original: inputList[pos][0],
+        stemmed: inputList[pos][1]
+    },
+    {
+        $inc: {count: inputList[pos][2]}
+    }, {upsert: true}, function(err, res)
+    {
+        process.nextTick(function()
+        {
+            chainInsert_LEX(inputList, pos+1, callback);
+        });
+    });
+}
 // insert all the elements in the list to rawhtml waitling list.
 function chainInsert(inputList, pos, callback)
 {
@@ -112,9 +138,23 @@ function removeHash(u)
 function countWords(contentInHier, callback)
 {
     result={};
+    stemRecord={};
     for (var i=0; i<contentInHier.length; i++)
     {
-        var tRes=contentInHier[i].tokenizeAndStem();
+        var tRes=tokenizer.tokenize(contentInHier[i]);
+        for (var j=0; j<tRes.length; j++)
+        {
+            var ori=tRes[j].toLowerCase();
+            var stm=natural.PorterStemmer.stem(ori);
+            tRes[j]=stm;
+            if (!(ori in stemRecord))
+                stemRecord[ori]={};
+            var t=stemRecord[ori];
+            if (!(stm in t))
+                t[stm]=0;
+            t[stm]++;
+        }
+        //var tRes=contentInHier[i].tokenizeAndStem();
         for (var j=0; j<tRes.length; j++)
         {
             if (!(tRes[j] in result))
@@ -130,7 +170,7 @@ function countWords(contentInHier, callback)
             }
         }
     }
-    callback(result);
+    callback(result, stemRecord);
 }
 
 // if the url path starts with "/yyyy/mm/dd" (cnn style), fetch it. otherwise returns empty string
@@ -194,7 +234,7 @@ function work()
             var theEnd=function()
             {
                 theEndCount++;
-                if (theEndCount>=3)
+                if (theEndCount>=4)
                 {
                     db[RAWHTML].update(
                     {
@@ -228,8 +268,18 @@ function work()
                     theEnd();
                 });
             });
-            countWords(dataInHier, function(wordsMap)
+            countWords(dataInHier, function(wordsMap, stemMap)
             {
+                //convert stemmap to [ori, stm, count]
+                var stemList=[];
+                for (var i in stemMap)
+                    for (var j in stemMap[i])
+                        stemList.push([i, j, stemMap[i][j]]);
+                chainInsert_LEX(stemList, 0, function()
+                {
+                    theEnd();
+                });
+                //==
                 wordsMap["__url__"]=doc.url;
                 wordsMap["__id__"]=doc._id;
                 wordsMap["__newsTime__"]=vTime;

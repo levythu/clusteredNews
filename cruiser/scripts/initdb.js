@@ -7,6 +7,7 @@ var db=model.db;
 var RAWHTML=model.rawhtml;
 var TERMMAT=model.terms;
 var NETTOPO=model.nettopo;
+var LEXINFO=model.lex;
 
 function eIndex(collection, indexContent, callback)
 {
@@ -36,8 +37,14 @@ eIndex(RAWHTML, {url: 1}, function()
                     {
                         eIndex(NETTOPO, {tourl: 1}, function()
                         {
-                            console.log((new Date()).toUTCString(), ">\tAll done. Now exiting...");
-                            process.exit(0);
+                            eIndex(LEXINFO, {original: 1}, function()
+                            {
+                                eIndex(LEXINFO, {stemmed: 1}, function()
+                                {
+                                    console.log((new Date()).toUTCString(), ">\tAll done. Now exiting...");
+                                    process.exit(0);
+                                });
+                            });
                         });
                     });
                 });
