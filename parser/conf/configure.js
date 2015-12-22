@@ -10,13 +10,22 @@ module.exports=
     worker:
     {
         // domain white/black list.
-        // if whitelist exist, blacklist is invalid.
+        // if whitelist is not null, blacklist is invalid.
         // lists are provided in REGEXP
         blacklist: [],
         whitelist:
         [
             /^(.*\.)?cnn\.com$/i
-        ]
+        ],
+
+        // path white/black list.
+        // if whitelist is not null, blacklist is invalid.
+        // lists are provided in REGEXP
+        path_blacklist:
+        [
+            /^\/videos?\//i
+        ],
+        path_whitelist: null
     },
     scheduler:
     {

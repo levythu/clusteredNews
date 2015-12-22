@@ -9,7 +9,7 @@ var url=require("url");
 
 var blackListForPath=
 [
-    /^\/videos\//i
+    /^\/videos?\//i
 ];
 
 function checkValid(theURL)

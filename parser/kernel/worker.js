@@ -44,7 +44,29 @@ function batchWorkers()
 }
 module.exports=batchWorkers;
 
-function validateURL(urlval)
+function validateURL_path(urlval)
+{
+    var hn=(url.parse(urlval)).path;
+    if (conf.worker.path_whitelist!=null)
+    {
+        var wl=conf.worker.path_whitelist;
+        for (var i=0; i<wl.length; i++)
+            if (wl[i].exec(hn)!=null)
+                return true;
+        return false;
+    }
+    else
+    {
+        var bl=conf.worker.path_blacklist;
+        if (bl==null)
+            return true;
+        for (var i=0; i<bl.length; i++)
+            if (bl[i].exec(hn)!=null)
+                return false;
+        return true;
+    }
+}
+function validateURL_domain(urlval)
 {
     var hn=(url.parse(urlval)).hostname;
     if (conf.worker.whitelist!=null)
@@ -65,6 +87,10 @@ function validateURL(urlval)
                 return false;
         return true;
     }
+}
+function validateURL(urlval)
+{
+    return validateURL_domain(urlval) && validateURL_path(urlval);
 }
 
 // insert all the elements in the list to lex
