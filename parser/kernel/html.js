@@ -23,6 +23,19 @@ var blackList=
     "script": 0,
     "style": 0
 };
+var whiteList=
+{
+    "title": 0,
+    "h1": 0,
+    "h2": 0,
+    "h3": 0,
+    "h4": 0,
+    "h5": 0,
+    "h6": 0,
+    "h7": 0,
+    "h8": 0,
+    "p":  0
+}
 function parse(content, callback, onerror)
 {
     var hStack=[];
@@ -30,6 +43,7 @@ function parse(content, callback, onerror)
     var hrefList=[];
     var pContent="";
     var scriptTags=0;
+    var whiteTags=0;
     for (var i=0; i<=Hierarchy.MAX_H; i++)
         result.push("");
     var parser = new htmlparser.Parser(
@@ -39,6 +53,8 @@ function parse(content, callback, onerror)
             var lcName=name.toLowerCase();
             if (lcName in blackList)
                 scriptTags++;
+            if (lcName in whiteList)
+                whiteTags++;
     		if (lcName in Hierarchy)
             {
                 hStack.push(Hierarchy[lcName]);
@@ -56,6 +72,8 @@ function parse(content, callback, onerror)
         {
             if (scriptTags>0)
                 return;
+            if (whiteTags<=0)
+                return;
             var h=hStack.length==0?Hierarchy.MAX_H:hStack[hStack.length-1];
             pContent+="\n"+text;
             result[h]+=" "+text;
@@ -65,6 +83,8 @@ function parse(content, callback, onerror)
             var lcName=tagname.toLowerCase();
             if (lcName in blackList)
                 scriptTags--;
+            if (lcName in whiteList)
+                whiteTags--;
     		if (lcName in Hierarchy)
             {
                 var t=hStack.pop();
