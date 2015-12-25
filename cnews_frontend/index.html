@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../favicon.ico">
+
+        <title>IRS Course Project</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="css/starter-template.css" rel="stylesheet">
+
+        <link href="css/dashboard.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#q=Johnson&cl=0&page=1">Johnson</a>
+                    <a class="navbar-brand" href="#q=Levy&cl=0&page=1">Levy</a>
+                    <a class="navbar-brand" href="#q=Dino&cl=0&page=1">Dino</a>
+                </div>
+            </div><!--/.nav-collapse -->
+        </nav>
+        
+        <div id="curtain" style="height:200px;"></div>
+
+        <div class="container">
+            <div class="starter-template">
+                <div class="lead">
+                    <h1 style="margin-bottom:20px;">IRS Course Project</h1>
+                    <input id="input" type="text" class="form-control lead" placeholder="Search..." onKeyPress="DetectEnterPressed(event)"/>
+                    <a style="cursor:pointer;" onclick="searchButtonClicked();">Search</a>
+                    <div id="loading" style="margin-top:10%; display:none;">
+                        <h1 style="color:maroon">Loading</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="resultPanel" class="container" style="display:none;">
+            <div class="row">
+                <div class="col-sm-3 col-md-2">
+                    <ul class="nav nav-sidebar">
+                        <li id="overviewTag" class="active"><a style="cursor:pointer;"  onclick="clusterSelected(0);">All Results</a></li>
+                    </ul>
+                    <ul id="clusterList" class="nav nav-sidebar">
+                        <li><a style="cursor:pointer;">Nav item</a></li>
+                        <li><a style="cursor:pointer;">Nav item again</a></li>
+                        <li><a style="cursor:pointer;">One more nav</a></li>
+                        <li><a style="cursor:pointer;">Another nav item</a></li>
+                        <li><a style="cursor:pointer;">More navigation</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-9 col-md-10">
+                    <h1 id="query" class="page-header" style="margin-top:0px;">Dashboard</h1>
+                    <h4 id="numberOfResults">100 results</h4>
+                    <div id="results" class="placeholder">
+
+                        <h3 style="margin-bottom:0px;"><a href="http://www.cnn.com/videos/us/2015/12/19/schools-close-over-islam-homework-burnett-pkg-erin.cnn/video/playlists/top-news-videos/">Schools shut down over lesson on Islam - CNN Video</a></h3>
+                        <span style="color:forestgreen;">
+                            http://www.cnn.com/videos/us/2015/12/19/schools-close-over-islam-homework-burnett-pkg-erin.cnn/video/playlists/top-news-videos/-20151219
+                        </span>
+                        <p style="margin-bottom:0px;">
+                            <span style="color:gray;">2015/12/01 - </span>Schools shut down over lesson on Islam - CNN Video Breaking News U.S. + Crime + Justice <span style="color:red">Energy</span> + Environment Extreme Weather Space + Science U.S. World Politics Money Opinion Health Entertainment Style Travel Sports Video Live TV  Search  ? U.S.  Edition + U.S. International Arabic
+                        </p>
+                        <span>
+                            <a href="http://localhost:1993/snapshot?id=56752f01553b9156d6a17c76">Cache Page (Cached on 20151219)</a>
+                        </span>
+
+                        <h3 style="margin-bottom:0px;"><a href="http://www.cnn.com/videos/us/2015/12/19/schools-close-over-islam-homework-burnett-pkg-erin.cnn/video/playlists/top-news-videos/">Schools shut down over lesson on Islam - CNN Video</a></h3>
+                        <span style="color:forestgreen;">
+                            http://www.cnn.com/videos/us/2015/12/19/schools-close-over-islam-homework-burnett-pkg-erin.cnn/video/playlists/top-news-videos/-20151219
+                        </span>
+                        <p style="margin-bottom:0px;">
+                            Schools shut down over lesson on Islam - CNN Video Breaking News U.S. + Crime + Justice <span style="color:red">Energy</span> + Environment Extreme Weather Space + Science U.S. World Politics Money Opinion Health Entertainment Style Travel Sports Video Live TV  Search  ? U.S.  Edition + U.S. International Arabic
+                        </p>
+                        <span>
+                            <a href="http://localhost:1993/snapshot?id=56752f01553b9156d6a17c76">Cache Page (Cached on 20151219)</a>
+                        </span>
+
+                    </div>
+
+                    <nav class="navbar navbar-default" style="border-color:transparent;">
+                        <div class="container">
+                            <div class="navbar-header">
+                                <a class="navbar-brand" href="#">Page</a>
+                            </div>
+                            <div class="navbar-collapse collapse">
+                                <ul id="pageList" class="nav navbar-nav">
+                                    <li class="active"><a style="cursor:pointer;">1</a></li>
+                                    <li><a style="cursor:pointer;">2</a></li>
+                                    <li><a style="cursor:pointer;">3</a></li>
+                                    <li><a style="cursor:pointer;">Next</a></li>
+                                </ul>
+                            </div><!--/.nav-collapse -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script>document.getElementById("curtain").style.height = window.innerHeight / 4 + 'px';</script>
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="js/ie10-viewport-bug-workaround.js"></script>
+        <script src="js/myJS.js"></script>
+
+    </body>
+</html>
